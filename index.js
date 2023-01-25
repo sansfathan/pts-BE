@@ -22,7 +22,7 @@ const log = require("./src/middleware/log");
 
 app.use(express.json());
 app.use(express.static("src/storage/uploads"));
-app.use(console2);
+// app.use(console2);
 app.use(console1);
 
 app.use(router);
