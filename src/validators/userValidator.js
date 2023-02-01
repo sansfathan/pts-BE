@@ -29,4 +29,10 @@ const updateUserValidator = [
     })
     .withMessage("Nama Wajib Di Isi !!!"),
 ];
-module.exports = { createUserValidator, updateUserValidator };
+const updatePassword = [
+  check("new_Password").isLength({
+    min : 8,
+  }).withMessage("password Min 8 karakter")
+
+]
+module.exports = { createUserValidator, updateUserValidator, updatePassword};

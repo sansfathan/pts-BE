@@ -24,6 +24,13 @@ module.exports = {
       harga: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        onDelete: "CASCADE ",
+        onUpdate: "CASCADE",
+        references: {
+          model: "users", //nama tabel
+          key: "id", //di relasikan
+          as: "userId", // tabel ini yg di relasikan
+        },
       },
       stok: {
         type: Sequelize.INTEGER,

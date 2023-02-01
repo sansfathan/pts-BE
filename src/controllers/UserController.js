@@ -1,5 +1,7 @@
 // const { use } = require("../routes/routers");
 
+const { where } = require("sequelize");
+
 const UserModel = require("../models").user;
 
 async function getListUser(req, res) {
@@ -46,8 +48,8 @@ async function createUser(req, res) {
 async function getDetailUserById(req, res) {
   try {
     const { id } = req.params;
-    const user = await UserModel.findByPk(id);
-    if (user === null) {
+    const users = await UserModel.findByPk(id);
+    if (users === null) {
       res.status(404).json({
         status: "Fail",
         msg: "User tidak Ditemukan",
@@ -56,7 +58,7 @@ async function getDetailUserById(req, res) {
     res.json({
       status: "success",
       msg: "User Berhasil",
-      data: user,
+      data: users,
     });
   } catch (err) {
     res.status(403).json({
@@ -70,12 +72,12 @@ async function getDetailUserById(req, res) {
 async function getDetailUserByParams(req, res) {
   try {
     const { email } = req.params;
-    const user = await UserModel.findOne({
+    const users = await UserModel.findOne({
       where: {
         tempatLahir: email,
       },
     });
-    if (user === null) {
+    if (users === null) {
       res.status(404).json({
         status: "Fail",
         msg: "User tidak Ditemukan",
@@ -84,7 +86,7 @@ async function getDetailUserByParams(req, res) {
     res.json({
       status: "success",
       msg: "User Berhasil ditemukan",
-      data: user,
+      data: users,
     });
   } catch (err) {
     res.status(403).json({
@@ -97,15 +99,15 @@ async function getDetailUserByParams(req, res) {
 async function updateUser(req, res) {
   try {
     const { id } = req.params;
-    const user = await UserModel.findByPk(id);
+    const users = await UserModel.findByPk(id);
     const payload = req.body;
     const { nama, tempatLahir, tanggalLahir } = payload;
-    if (user === null) {
+    if (users === null) {
       res.status(404).json({
         status: "Fail",
         msg: "User tidak Ditemukan",
         id: id,
-        user: user,
+        users: users,
       });
     }
 
@@ -135,7 +137,6 @@ async function updateUser(req, res) {
       }
     );
 
-   
     res.json({
       status: "success",
       msg: "Update User Berhasil",
@@ -152,15 +153,15 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
   try {
     const { id } = req.params;
-    const user = await UserModel.findByPk(id);
+    const users = await UserModel.findByPk(id);
     const payload = req.body;
-    
-    if (user === null) {
+
+    if (users === null) {
       res.status(404).json({
         status: "Fail",
         msg: "User tidak Ditemukan",
         id: id,
-        user: user,
+        users: users,
       });
     }
 
@@ -177,15 +178,12 @@ async function deleteUser(req, res) {
     //   }
     // );
 
-    await UserModel.destroy(
-      {
-        where: {
-          id: id,
-        },
-      }
-    );
+    await UserModel.destroy({
+      where: {
+        id: id,
+      },
+    });
 
-   
     res.json({
       status: "success",
       msg: "Delete User Berhasil",
@@ -200,11 +198,10 @@ async function deleteUser(req, res) {
   }
 }
 
-
 // async function deleteUser(req, res) {
 //   try {
 //     const {id} = req.params
-//     const user = await UserModel.findByPk(id);
+//     const users = await UserModel.findByPk(id);
 //     if (user === null) {
 //       return res.status(404).json({
 //         status: "Fail",
@@ -229,6 +226,52 @@ async function deleteUser(req, res) {
 //   }
 // }
 
+async function updatePassword(req, res) {
+  const payload = req.body;
+  const { email, old_password, new_password } = payload;
+
+  try {
+    const users = await UserModel.findOne({
+      where: {
+        email: req.email,
+      },
+    });
+    const verify = await bcrypt.compareSync(old_password.users.password);
+    if (users === null) {
+      return res.json({
+        status: 400,
+        msg: "email not found",
+      });
+    }
+    if (verify) {
+      let hashPassword = await bcrypt.hash(new_password, 10);
+      await UserModel.update(
+        { password: hashPassword },
+        {
+          where: {
+            id: users.id,
+          },
+        }
+      );
+      res.json({
+        status: "200",
+        msg: "passwoed updated",
+      });
+    } else {
+      res.json({
+        msg: "password lama tidak sesuai",
+      });
+    }
+  } catch (err) {
+    console.log("err", err);
+    res.status(403).json({
+      status: "failed",
+      msg: "ada kesalahan update password",
+      err: err,
+    });
+  }
+}
+
 module.exports = {
   updateUser,
   getListUser,
@@ -236,4 +279,5 @@ module.exports = {
   getDetailUserById,
   getDetailUserByParams,
   deleteUser,
+  updatePassword,
 };
