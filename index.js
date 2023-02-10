@@ -4,14 +4,12 @@ require("dotenv").config();
 const port = process.env.PORT || 1313;
 const router = require("./src/routes/routers");
 const { sequelize } = require("./src/models");
-const authMiddleware = require("./src/middleware/authMiddleware");
 
-
+const pageNationMidlleware = require("./src/middleware/pageNationMiddleware");
 app.use(express.json());
 app.use(express.static("src/storage/uploads"));
 // app.use(authMiddleware);
-
-
+app.use(pageNationMidlleware);
 app.use(router);
 app.listen(port, async () => {
   try {

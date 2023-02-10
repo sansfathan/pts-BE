@@ -24,21 +24,28 @@ const {
 const validationResultMiddleware = require("../middleware/validationResultMiddleware");
 const userValidator = require("../validators/userValidator");
 const produkValidator = require("../validators/produkValidator");
-const { register, login, forgotPassword } = require("../controllers/AuthController");
+const { register, login, forgotPassword, resetPassword } = require("../controllers/AuthController");
 const jwtValidateMidlleWare = require("../middleware/jwtValidateMidlleware");
 const {
   createArtikel,
   getListArtikel,
   updateArtikel,
   deleteArtikel,
+  createArtikelBulk,
+  createArtikelMulti,
+  deleteArtikelmulti,
+  deleteMulti,
 } = require("../controllers/artikelController");
+
+
 //Register
 router.post("/register", register);
 //login
 router.post("/login", login);
 //lupa password
 router.post("/lupa-password", forgotPassword)
-
+//reset pasword
+router.post("/reset-password/:userId/:token", resetPassword)
 
 router.use(jwtValidateMidlleWare);
 
@@ -84,8 +91,11 @@ router.get("/produk/detail/:id", getDetailProdukById);
 router.get("/produk/detail/:namaProduk", getDetailProdukByParams);
 //artikel
 router.post("/artikel/create", createArtikel);
+router.post("/artikel/createBulk", createArtikelBulk);
+router.post("/artikel/createMulti", createArtikelMulti);
 router.get("/artikel/list", getListArtikel);
 router.put("/artikel/update/:id", updateArtikel);
 router.delete("/artikel/delete/:id", deleteArtikel);
+router.delete("/artikel/delete-mullti/", deleteMulti);
 //
 module.exports = router;

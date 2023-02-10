@@ -1,8 +1,10 @@
 const UserModel = require("../models").user;
-const ForgotPasswordModel = require("../models").forgotPassword;
+const ForgotPasswordModel = require("../models").password;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmailHandle = require("../mail");
+const crypto = require("crypto");
+const dayjs = require("dayjs");
 require("dotenv").config();
 
 async function register(req, res) {
@@ -112,7 +114,7 @@ async function forgotPassword(req, res) {
         userId: user.id,
       },
     });
-    // sudah hapus
+    //jika ada, hapus yg ada
     if (currentToken !== null) {
       await ForgotPasswordModel.destroy({
         where: {
@@ -121,9 +123,18 @@ async function forgotPassword(req, res) {
       });
     }
     // jika belum buat token
+    const token = crypto.randomBytes(32).toString("hex");
+    const date = new Date();
+    const expire = date.setHours(date.getHours() + 1);
+
+    await ForgotPasswordModel.create({
+      userId: user.id,
+      token: token,
+      expireDate: dayjs(expire).format("YYYY-MM-DD HH:mm:ss"),
+    });
 
     const context = {
-      link: "https://www.youtube.com/",
+      link: `${process.env.MAIL_CLIENT_URL}/reset-password/${user.id}/${token}`,
     };
     const sendMail = await sendEmailHandle(
       email,
@@ -150,4 +161,62 @@ async function forgotPassword(req, res) {
   }
 }
 
-module.exports = { register, login, forgotPassword };
+async function resetPassword(req, res) {
+  try {
+    let { newPassword } = req.body;
+    let { userId, token } = req.params;
+    // -  cek apakah token dan userId ada di tabel
+    const currentToken = await ForgotPasswordModel.findOne({
+      where: { userId: userId, token: token },
+    });
+
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    //jika gk ada berikan response token tidak valid
+    if (currentToken === null) {
+      res.status(403).json({
+        msg: "token invalid",
+      });
+    } else {
+      let userExpired = currentToken.expiredDate;
+      let expire = dayjs(Date());
+      let difference = expire.diff(userExpired, "hour");
+      // - cek apakah sudah expire
+      // jika sudah expire berikan respinse token sudah expire
+      if (difference !== 0) {
+        res.json({
+          status: "Fail",
+          msg: "Token has expired",
+        });
+      } else {
+        let hashPassword = await bcrypt.hash(newPassword, 10);
+        await UserModel.update(
+          { password: hashPassword },
+          {
+            where: {
+              id: user.id,
+            },
+          }
+        );
+        await ForgotPasswordModel.destroy({ where: { token: token } });
+        res.json({
+          status: "success",
+          msg: "password updated",
+        });
+      }
+    }
+  } catch (err) {
+    console.log("err", err);
+    res.status(403).json({
+      status: "error 403",
+      msg: "ada error",
+      err: err,
+      // token: currentToken
+    });
+  }
+}
+
+module.exports = { register, login, forgotPassword, resetPassword, };
