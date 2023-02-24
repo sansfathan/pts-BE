@@ -30,7 +30,7 @@ async function createProduk(req, res) {
       });
       res.status(201).json({
         status: "Success",
-        msg: "Berhasil Disimpan",
+        msg: "berhasil Disimpan",
       });
     } catch (error) {
       res.status(403).json({
