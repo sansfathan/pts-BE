@@ -6,21 +6,7 @@ const uploadSingle = require("../storage/SingleFile");
 const uploadMulti = require("../storage/MultiFile");
 const router = express.Router();
 const multer = require("multer");
-const {
-  getListUser,
-  createUser,
-  getDetailUserById,
-  getDetailUserByParams,
-  updateUser,
-  deleteUser,
-  updatePassword,
-} = require("../controllers/UserController");
-const {
-  getListProduk,
-  createProduk,
-  getDetailProdukById,
-  getDetailProdukByParams,
-} = require("../controllers/produkController");
+
 const validationResultMiddleware = require("../middleware/validationResultMiddleware");
 const userValidator = require("../validators/userValidator");
 const produkValidator = require("../validators/produkValidator");
@@ -50,52 +36,52 @@ router.post("/reset-password/:userId/:token", resetPassword)
 router.use(jwtValidateMidlleWare);
 
 //Update user
-router.put(
-  "/user/update/:id",
-  userValidator.updateUserValidator,
-  validationResultMiddleware,
-  updateUser
-);
+// router.put(
+//   "/user/update/:id",
+//   userValidator.updateUserValidator,
+//   validationResultMiddleware,
+//   updateUser
+// );
 //Update Password User
-router.put(
-  "/user/update-password",
-  userValidator.updatePassword,
-  validationResultMiddleware,
-  updatePassword
-);
-// delete User
-router.delete("/user/delete/:id", deleteUser);
+// router.put(
+//   "/user/update-password",
+//   userValidator.updatePassword,
+//   validationResultMiddleware,
+//   updatePassword
+// );
+// // delete User
+// router.delete("/user/delete/:id", deleteUser);
 
-//user
-router.get("/user/list", getListUser);
-router.post(
-  "/user/create",
-  userValidator.createUserValidator,
-  validationResultMiddleware,
-  createUser
-);
-//getUserById
-router.get("/user/detail/:id", getDetailUserById);
-router.get("/user/list/:email", getDetailUserByParams);
+// //user
+// router.get("/user/list", getListUser);
+// router.post(
+//   "/user/create",
+//   userValidator.createUserValidator,
+//   validationResultMiddleware,
+//   createUser
+// );
+// //getUserById
+// router.get("/user/detail/:id", getDetailUserById);
+// router.get("/user/list/:email", getDetailUserByParams);
 
-//produk
-router.get("/produk/listProduk", getListProduk);
-router.post(
-  "/produk/create",
-  produkValidator.createProdValidator,
-  validationResultMiddleware,
-  createProduk
-);
-//getUserById
-router.get("/produk/detail/:id", getDetailProdukById);
-router.get("/produk/detail/:namaProduk", getDetailProdukByParams);
-//artikel
-router.post("/artikel/create", createArtikel);
-router.post("/artikel/createBulk", createArtikelBulk);
-router.post("/artikel/createMulti", createArtikelMulti);
-router.get("/artikel/list", getListArtikel);
-router.put("/artikel/update/:id", updateArtikel);
-router.delete("/artikel/delete/:id", deleteArtikel);
-router.delete("/artikel/delete-mullti/", deleteMulti);
+// //produk
+// router.get("/produk/listProduk", getListProduk);
+// router.post(
+//   "/produk/create",
+//   produkValidator.createProdValidator,
+//   validationResultMiddleware,
+//   createProduk
+// );
+// //getUserById
+// router.get("/produk/detail/:id", getDetailProdukById);
+// router.get("/produk/detail/:namaProduk", getDetailProdukByParams);
+// //artikel
+// router.post("/artikel/create", createArtikel);
+// router.post("/artikel/createBulk", createArtikelBulk);
+// router.post("/artikel/createMulti", createArtikelMulti);
+// router.get("/artikel/list", getListArtikel);
+// router.put("/artikel/update/:id", updateArtikel);
+// router.delete("/artikel/delete/:id", deleteArtikel);
+// router.delete("/artikel/delete-mullti/", deleteMulti);
 //
 module.exports = router;
