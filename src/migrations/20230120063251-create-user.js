@@ -18,16 +18,13 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-
-      isActive: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
-      },
-      tempatLahir: {
+      password: {
         type: Sequelize.STRING,
       },
-      tanggalLahir: {
-        type: Sequelize.DATEONLY,
+      role: {
+        type: Sequelize.ENUM,
+        allowNull: false,
+        values: ["masyarakat", "petugas"],
       },
       createdAt: {
         allowNull: false,
