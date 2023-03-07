@@ -11,14 +11,14 @@ module.exports = {
       },
       tgl_pengaduan: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
-      nik_pengaduan: {
+      nik_pengaduans: {
         type: Sequelize.INTEGER,
+
         references: {
           model: "masyarakats",
           key: "nik_masyarakats",
-          as: "nik_pengaduan",
+          as: "nik_pengaduans",
         },
       },
       isi_laporan: {

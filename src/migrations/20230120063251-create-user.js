@@ -9,15 +9,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      nik: {
+        type: Sequelize.CHAR(16),
+        allowNull: false,
+      },
       nama: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
+
       password: {
         type: Sequelize.STRING,
       },
@@ -25,6 +25,10 @@ module.exports = {
         type: Sequelize.ENUM,
         allowNull: false,
         values: ["masyarakat", "petugas"],
+      },
+      telp: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

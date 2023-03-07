@@ -11,13 +11,8 @@ module.exports = {
       },
       id_pengaduan: {
         type: Sequelize.INTEGER,
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-        references: {
-          model: "pengaduans",
-          key: "id",
-          as: "id_pengaduan",
-        },
+        allowNull: false,
+        primaryKey: true,
       },
       tgl_tanggapan: {
         type: Sequelize.DATE,
@@ -27,7 +22,8 @@ module.exports = {
       },
       id_petugas: {
         type: Sequelize.INTEGER,
-
+        allowNull: false,
+        primaryKey: true,
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
         references: {

@@ -9,20 +9,21 @@ require("dotenv").config();
 
 async function register(req, res) {
   try {
-    const payload = req.body;
-    const { nama, email, password, role } = payload;
+    let payload = req.body;
+    let {nik, nama, password, role, telp } = payload;
     let hashPassword = await bcrypt.hashSync(password, 10);
 
     await UserModel.create({
+      nik,
       nama,
-      email,
-      password : hashPassword,
+      password: hashPassword,
       role,
+      telp
     });
-    if (email === null) {
+    if (nama === null) {
       return res.status(422).json({
         status: "Fail",
-        msg: "Email kosong Silakan di isi",
+        msg: "nama kosong Silakan di isi",
       });
     }
     res.json({
@@ -41,32 +42,32 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
-    const payload = req.body;
-    const { email, password } = payload;
+    let payload = req.body;
+    let { nama, password } = payload;
     const user = await UserModel.findOne({
       where: {
-        email: email,
+        nama: nama,
       },
     });
     if (user === null) {
       return res.status(422).json({
         status: 422,
-        msg: 'Email tidak ditemukan silahkan register',
+        msg: "nama tidak ditemukan silahkan register",
       });
     }
     if (password === null) {
       return res.status(422).json({
         status: 422,
-        msg: 'Email & Password tidak dicocok',
+        msg: "nama & Password tidak dicocok",
       });
     }
-    
+
     const verify = await bcrypt.compareSync(password, user.password);
 
     if (verify === false) {
       return res.status(422).json({
         status: "Fail",
-        msg: "Email dan Password Tidak Cocok",
+        msg: "nama dan Password Tidak Cocok",
       });
     }
 
@@ -74,7 +75,6 @@ async function login(req, res) {
       {
         id: user?.id,
         role: user?.role,
-        email: user?.email,
         nama: user?.nama,
       },
       process.env.JWT_SECRET,
@@ -83,14 +83,14 @@ async function login(req, res) {
       }
     );
 
-    
     res.json({
       status: "Success",
       msg: "Login Berhasil",
       user: user,
-      token
+      token,
     });
   } catch (err) {
+    console.log(err)
     res.status(403).json({
       status: "Fail",
       msg: "Ada Kesalahan",
@@ -99,6 +99,4 @@ async function login(req, res) {
   }
 }
 
-
-
-module.exports = { register, login  };
+module.exports = { register, login };
